@@ -2,14 +2,18 @@
 #define MENU_H_INCLUDED
 #define ScreenWidth 1200
 #define ScreenHeight 600
+#include "diceboard.h"
 
 //-------------------------------Menu Buttons Booleans -------------------------------------------
+
 
 bool menuPage = true;
 bool startPage = false;
 bool scorePage = false;
 bool controlPage = false;
 bool aboutPage = false;
+bool diceBoardMenu = false;
+bool roomPage = false;
 
 //--------------------------------Menu button handler  -------------------------------------------
 
@@ -20,6 +24,21 @@ void menuPageHandler()
 	scorePage = false;
 	controlPage = false;
 	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
+}
+
+void diceBoardHandler()
+{
+	menuPage = false;
+	startPage = false;
+	scorePage = false;
+	controlPage = false;
+	aboutPage = false;
+	diceBoardMenu = true;
+	roomPage = false;
+	snakeAlive = true;
+	snakeLife = 3;
 }
 
 void startPageHandler()
@@ -29,6 +48,8 @@ void startPageHandler()
 	scorePage = false;
 	controlPage = false;
 	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage == false;
 }
 
 void scorePageHandler()
@@ -38,6 +59,8 @@ void scorePageHandler()
 	scorePage = true;
 	controlPage = false;
 	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
 }
 
 void controlPageHandler()
@@ -47,6 +70,8 @@ void controlPageHandler()
 	scorePage = false;
 	controlPage = true;
 	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
 }
 
 void aboutPageHandler()
@@ -56,6 +81,18 @@ void aboutPageHandler()
 	scorePage = false;
 	controlPage = false;
 	aboutPage = true;
+	diceBoardMenu = false;
+	roomPage = false;
+}
+void roomPageHandler()
+{
+	menuPage = false;
+	startPage = false;
+	scorePage = false;
+	controlPage = false;
+	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = true;
 }
 
 
