@@ -34,8 +34,7 @@ void ran()
 {
 	//time_t now = time(0);
 	int gen = rand() % 100;
-	//diceIndex = (now * gen) % 6;
-	diceIndex =  gen % 6;
+	diceIndex = (/*now * */ gen) % 6;
 	diceRoll = diceIndex + 1;
 	totalRoll += diceRoll;
 }

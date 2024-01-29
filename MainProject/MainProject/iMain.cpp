@@ -1,6 +1,7 @@
 #include "iGraphics.h"
 #include "menu.h"
 #include "diceboard.h"
+#include "bitmap_loader.h"
 #define ScreenWidth 1200
 #define ScreenHeight 600
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Idraw Here::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::://
@@ -25,8 +26,8 @@ int bulletPlayerIndex = 0;
 int crouchTimer = 0;
 bool stand = true;
 bool crouch = false;
-bool fire = false;
 bool hit = true;
+bool fireAnime = false;
 
 void actionCrouch()
 {
@@ -76,29 +77,51 @@ void lifeHeartShow()
 
 void charFire()
 {
-	if (fire==true && crouch==false)
+	if (hit==false && crouch==false)
 	{
-		int bulletPlayer[3] = { iLoadImage("image\\player09.png"),
-			iLoadImage("image\\player10.png"),
-			iLoadImage("image\\player11.png") };
-		iShowImage(playerX, playerY, 208, 208, bulletPlayer[bulletPlayerIndex]);
 		bulletPlayerIndex++;
 		if (bulletPlayerIndex == 3)
 		{
 			bulletPlayerIndex = 0;
+			fireAnime = false;
+			stand = true;
+			
 		}
 	}
 	
 
 }
 
-void checkCollision()
+void ladderDown()
 {
-
+	
+	if (animeBoardY != 0)
+	{
+		boardMoveCounter *= (-1);
+		boardy += 208;
+	}
+		
+	if (totalRoll == 7)
+		totalRoll = 2;
+	else if (totalRoll == 11)
+		totalRoll = 8;
+	else if (totalRoll == 15)
+		totalRoll = 14;
+	else if (totalRoll == 19)
+		totalRoll = 10;
+	/*else if (totalRoll == )
+		totalRoll = 8;
+	else if (totalRoll == 11)
+		totalRoll = 8;
+	else if (totalRoll == 11)
+		totalRoll = 8;
+	*/
 }
+
 
 void iDraw()
 {
+	//printf("%d", totalRoll);
 	iClear();
 	//------------------------------Menupage-------------------------------
 	if (menuPage)
@@ -157,18 +180,18 @@ void iDraw()
 
 		room();
 		
-		int room[4] = { iLoadImage("image\\SnakeRoom.png"),
+		/*int room[4] = { iLoadImage("image\\SnakeRoom.png"),
 			iLoadImage("image\\NeutralRoom.png"),
 			iLoadImage("image\\TreasureRoom.png"),
 			iLoadImage("image\\LadderRoom.png") };
-
+			*/
 		int player1[4] = { iLoadImage("image\\player00.png"),
 			iLoadImage("image\\player01.png"),
 			iLoadImage("image\\player02.png"),
 			iLoadImage("image\\player03.png") };
 
-		iShowImage(0, 0, ScreenWidth, ScreenHeight, room[roomIndex]);
-		if (stand==true && fire == false)
+		//iShowImage(0, 0, ScreenWidth, ScreenHeight, room[roomIndex]);
+		if (stand==true)
 		{
 			iShowImage(playerX, playerY, 208, 208, player1[roomAnimeIndex]);
 			if (charInit)
@@ -178,12 +201,22 @@ void iDraw()
 			}
 		}
 
-		if (fire)
+		if (hit == false)
 		{
-			charFire();
 			iShowImage(bulletX, bulletY, 16, 16, iLoadImage("image\\pro0.png"));
-			//stand = true;
 		}
+
+		if (fireAnime == true && crouch == false)
+		{
+			int bulletPlayer[3] = { iLoadImage("image\\player09.png"),
+				iLoadImage("image\\player10.png"),
+				iLoadImage("image\\player11.png") };
+			iShowImage(playerX, playerY, 208, 208, bulletPlayer[bulletPlayerIndex]);
+		}
+
+
+
+
 
 		if (snakeAlive==true && roomIndex==0)
 		{
@@ -202,7 +235,7 @@ void iDraw()
 
 			actionCrouch();
 			crouchTimer++;
-			if (crouchTimer >= 3)
+			if (crouchTimer >= 50)
 			{
 				crouchTimer = 0;
 				crouch = false;
@@ -241,7 +274,7 @@ void iMouse(int button, int state, int mx, int my)
 	
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		printf("x=%d y=%d", mx, my);
+		//printf("x=%d y=%d", mx, my);
 		if (menuPage == true && (mx >= 465 && mx <= 735) && (my >= 336 && my <= 414))
 		{
 			diceBoardMenuInitialize();
@@ -293,7 +326,7 @@ void iKeyboard(unsigned char key)
 		}
 	}
 
-	if (key == 'd')
+	if (key == 'd' || key == 'D')
 	{
 		if (diceBoardMenu && rollDice)
 		{
@@ -352,10 +385,12 @@ void iKeyboard(unsigned char key)
 
 	if (key == ' ')
 	{
-		if (roomPage==true && fire==false && stand==true && hit==true && roomIndex==0 && snakeAlive==true)
+		if (roomPage==true && stand==true && hit==true && roomIndex==0 && snakeAlive==true)
 		{
-			fire = true;
 			hit = false;
+			fireAnime = true;
+			stand = false;
+			crouch = false;
 		}
 	}
 	
@@ -398,6 +433,7 @@ void iSpecialKeyboard(unsigned char key)
 		{
 			crouch = true;
 			stand = false;
+			bulletPlayerIndex = 0;
 		}
 	}
 	
@@ -405,17 +441,18 @@ void iSpecialKeyboard(unsigned char key)
 
 void snakeVenomBulletChange()
 {
-	if (roomPage==true && roomIndex==0)
+	if (roomPage==true && roomIndex==0 && snakeAlive==true)
 	{
-		snakeVenomX -= 50;
+		snakeVenomX -= 20;
 		if (stand == true && snakeVenomX <= playerX + 150 && snakeVenomX >= playerX)
 		{
 			snakeVenomInitialize();
 			playerLife--;
 			if (playerLife == 0)
 			{
+				snakeAlive = true;
 				check = true;
-				rollDice = true;
+				//rollDice = true;
 				diceBoardHandler();
 				venomThrow = true;
 				charInit = true;
@@ -423,6 +460,7 @@ void snakeVenomBulletChange()
 				heart--;
 				if (heart == 0)
 					exit(0);
+				ladderDown();
 			}
 		}
 		else if (snakeVenomX <= 0)
@@ -430,13 +468,13 @@ void snakeVenomBulletChange()
 			snakeVenomX = snakeX;
 		}
 	}
-	if (roomPage == true && fire == true )
+	if (roomPage == true && hit == false )
 	{
-		bulletX += 50;
+		bulletX += 20;
 		if (bulletX >= snakeX)
 		{
 			bulletInitialize();
-			fire = false;
+			//fire = false;
 			hit = true;
 			snakeLife--;
 			if (snakeLife == 0)
@@ -454,9 +492,9 @@ int main()
 	bulletInitialize();
 	snakeVenomInitialize();
 	iSetTimer(100, boardAnimeChange);
-	iSetTimer(100, roomAnimeChange);
-	iSetTimer(10, snakeVenomBulletChange);
-	iSetTimer(10, charFire);
+	iSetTimer(150, roomAnimeChange);
+	iSetTimer(100, snakeVenomBulletChange);
+	iSetTimer(100, charFire);
 	iInitialize(ScreenWidth, ScreenHeight, "Serpentine Odyssey : Ladder of Shadows");
 	///updated see the documentations
 	iStart();
