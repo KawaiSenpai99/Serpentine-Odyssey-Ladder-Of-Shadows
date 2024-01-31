@@ -14,6 +14,7 @@ bool controlPage = false;
 bool aboutPage = false;
 bool diceBoardMenu = false;
 bool roomPage = false;
+bool gameOverPage = false;
 
 //--------------------------------Menu button handler  -------------------------------------------
 
@@ -26,6 +27,7 @@ void menuPageHandler()
 	aboutPage = false;
 	diceBoardMenu = false;
 	roomPage = false;
+	gameOverPage = false;
 }
 
 void diceBoardHandler()
@@ -39,6 +41,7 @@ void diceBoardHandler()
 	roomPage = false;
 	snakeAlive = true;
 	snakeLife = 3;
+	gameOverPage = false;
 }
 
 void startPageHandler()
@@ -50,6 +53,7 @@ void startPageHandler()
 	aboutPage = false;
 	diceBoardMenu = false;
 	roomPage == false;
+	gameOverPage = false;
 }
 
 void scorePageHandler()
@@ -61,6 +65,7 @@ void scorePageHandler()
 	aboutPage = false;
 	diceBoardMenu = false;
 	roomPage = false;
+	gameOverPage = false;
 }
 
 void controlPageHandler()
@@ -72,6 +77,7 @@ void controlPageHandler()
 	aboutPage = false;
 	diceBoardMenu = false;
 	roomPage = false;
+	gameOverPage = false;
 }
 
 void aboutPageHandler()
@@ -83,6 +89,7 @@ void aboutPageHandler()
 	aboutPage = true;
 	diceBoardMenu = false;
 	roomPage = false;
+	gameOverPage = false;
 }
 void roomPageHandler()
 {
@@ -93,6 +100,19 @@ void roomPageHandler()
 	aboutPage = false;
 	diceBoardMenu = false;
 	roomPage = true;
+	gameOverPage = false;
+}
+
+void gameOverPageHandler()
+{
+	menuPage = false;
+	startPage = false;
+	scorePage = false;
+	controlPage = false;
+	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
+	gameOverPage = true;
 }
 
 

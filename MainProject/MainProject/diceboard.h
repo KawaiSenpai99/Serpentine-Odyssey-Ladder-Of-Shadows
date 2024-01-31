@@ -25,7 +25,11 @@ bool snakeAlive = true;
 bool venomThrow = true;
 bool charInit = true;
 
+bool chest = true;
+bool sound = true;
+
 bool check = true;
+bool multiple = false;
 
 
 //---------------FUNCTIONS-------------------
@@ -34,7 +38,7 @@ void ran()
 {
 	//time_t now = time(0);
 	int gen = rand() % 100;
-	diceIndex = (/*now * */ gen) % 6;
+	diceIndex = (/*now * */gen) % 6;
 	diceRoll = diceIndex + 1;
 	totalRoll += diceRoll;
 }
@@ -55,6 +59,7 @@ void boardAnimeMove(){
 	{
 		if (totalRoll>=20)
 		{
+			multiple = true;
 			totalRoll -= diceRoll;
 			diceRoll = 0;
 		}

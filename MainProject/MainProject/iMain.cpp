@@ -6,6 +6,8 @@
 #define ScreenHeight 600
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::Idraw Here::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::://
 
+
+
 int playerX = 208;
 int playerY = 100;
 int playerLife = 5;
@@ -29,6 +31,186 @@ bool crouch = false;
 bool hit = true;
 bool fireAnime = false;
 
+//------------------------------HIGH SCORE------------------------------
+
+int point = 0;
+char sc[1000];
+
+void sortScore();
+void readScore();
+int len = 0;
+char str1[100];
+bool newScore = true;
+
+struct Hscore{
+	char name[20];
+	int score=0;
+}highScore[5];
+
+void readScore()
+{
+	FILE *fp;
+	fp = fopen("Score.txt", "r");
+	char showName[5][30], showScore[5][5];
+	for (int i = 0; i < 5; i++){
+		fscanf(fp, "%s %d\n", highScore[i].name, &highScore[i].score);
+	}
+	for (int i = 0; i < 5; i++){
+		sprintf(showName[i], "%s", highScore[i].name);
+		sprintf(showScore[i], "%d", highScore[i].score);
+		iSetColor(255, 0, 0);
+		iText(400, 430 - 85 * i, showName[i], GLUT_BITMAP_TIMES_ROMAN_24);
+		iText(500, 430 - 85 * i, showScore[i], GLUT_BITMAP_TIMES_ROMAN_24);
+	}
+	fclose(fp);
+}
+
+void sortScore()
+{
+	FILE *fp;
+	fp = fopen("Score.txt", "r");
+	for (int i = 0; i < 5; i++)
+	{
+		fscanf(fp, "%s %d\n", highScore[i].name, &highScore[i].score);
+	}
+	fclose(fp);
+	int temp;
+	char n[30];
+	if (newScore)
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			if (highScore[i].score < point)
+			{
+				highScore[4].score = point;
+				strcpy(highScore[4].name, str1);
+				for (int j = 0; j < 5; j++)
+				{
+					for (int k = 5; k>j; k--)
+					{
+						if (highScore[k].score > highScore[k - 1].score)
+						{
+							temp = highScore[k - 1].score;
+							highScore[k - 1].score = highScore[k].score;
+							highScore[k].score = temp;
+
+							strcpy(n, highScore[k - 1].name);
+							strcpy(highScore[k - 1].name, highScore[k].name);
+							strcpy(highScore[k].name,n);
+						}
+					}
+				}
+
+				FILE* fp = fopen("Score.txt", "w");
+				for (int i = 0; i < 5; i++)
+				{
+					fprintf(fp, "%s %d\n", highScore[i].name, highScore[i].score);
+				}
+				fclose(fp);
+
+				newScore = false;
+				break;
+			}
+		}
+	}
+}
+
+void showChar(){
+
+	iSetColor(255, 0, 0);
+	iText(400, 200, "Enter Your Name : ", GLUT_BITMAP_TIMES_ROMAN_24);
+	iRectangle(495, 150, 160, 30);
+	iText(500, 160, str1, GLUT_BITMAP_TIMES_ROMAN_24);
+
+}
+
+void takeChar(unsigned key){
+
+	if (key == '\r')
+	{
+		menuPageHandler();
+		sortScore();
+	}
+	else if (key == '\b')
+	{
+		if (len <= 0)
+			len = 0;
+		else
+			len--;
+		str1[len] ='\0';
+	}
+	else
+	{
+		str1[len] = key;
+		len++;
+
+		if (len > 15)
+			len = 15;
+		str1[len] = '\0';
+	}
+
+}
+
+//-------------------SHOWING SCORE------------------------------
+
+void showScore(){
+
+	if (roomPage == true || diceBoardMenu == true){
+
+		iSetColor(255, 0, 0);
+		iText(1060, 470, "Score", GLUT_BITMAP_TIMES_ROMAN_24);
+
+		sprintf(sc, "%d", point);
+		iText(1060, 450, sc, GLUT_BITMAP_TIMES_ROMAN_24);
+
+	}
+
+}
+
+
+//-------------------------FOR EVERY START GAME-----------------------------------
+
+void startgame()
+{
+	boardMoveCounter = 1;
+	animeIndex = 0;
+	roomAnimeIndex = 0;
+	boardy = 0;
+	animeBoardX = 0;
+	animeBoardY = 0;
+	totalRoll = 0;
+	roomIndex = 0;
+	rollDice = true;
+	snakeX = 800;
+	snakeY = 100;
+	snakeLife = 3;
+	snakeAlive = true;
+	venomThrow = true;
+	charInit = true;
+	check = true;
+	multiple = false;
+
+
+	diceBoardHandler();
+	startPageHandler();
+
+
+	playerLife = 5;
+	heart = 3;
+	crouchTimer = 0;
+	stand = true;
+	crouch = false;
+	hit = true;
+	fireAnime = false;
+	point = 0;
+	len = 0;
+	newScore = true;
+	chest = true;
+
+
+}
+
+
 void actionCrouch()
 {
 	iShowImage(playerX, playerY, 208, 208, iLoadImage("image\\player08.png"));
@@ -45,7 +227,7 @@ void bulletInitialize()
 	bulletX = playerX + 208;
 	bulletY = playerY + 208/2;
 }
-
+//--------------------------LifeRelated---------------------------
 void lifeBarShow()
 {
 	if (roomPage)
@@ -91,7 +273,7 @@ void charFire()
 	
 
 }
-
+//-------------------------Losing to Snake---------------------------
 void ladderDown()
 {
 	
@@ -109,13 +291,24 @@ void ladderDown()
 		totalRoll = 14;
 	else if (totalRoll == 19)
 		totalRoll = 10;
-	/*else if (totalRoll == )
-		totalRoll = 8;
-	else if (totalRoll == 11)
-		totalRoll = 8;
-	else if (totalRoll == 11)
-		totalRoll = 8;
-	*/
+}
+//-----------------------------Winning In Life-----------------------
+void ladderUp()
+{
+	diceRoll = false;
+	if (animeBoardY >= 0)
+	{
+		boardMoveCounter *= (-1);
+		boardy -= 208;
+	}
+	if (totalRoll == 2)
+		totalRoll = 7;
+	else if (totalRoll == 6)
+		totalRoll = 13;
+	else if (totalRoll == 10)
+		totalRoll = 19 ;
+	else if (totalRoll == 14)
+		totalRoll = 15;
 }
 
 
@@ -137,6 +330,10 @@ void iDraw()
 	else if (menuPage != true && scorePage == true)
 	{
 		iShowImage(0, 0, ScreenWidth, ScreenHeight, iLoadImage("image\\MenuHighScore.png"));
+
+		readScore();
+
+
 	}
 
 	else if (menuPage != true && controlPage == true)
@@ -147,6 +344,12 @@ void iDraw()
 	else if (menuPage != true && aboutPage == true)
 	{
 		iShowImage(0, 0, ScreenWidth, ScreenHeight, iLoadImage("image\\MenuAbout.png"));
+	}
+
+	else if (gameOverPage)
+	{
+		iShowImage(0, 0, ScreenWidth, ScreenHeight, iLoadImage("image\\GameOver.png"));
+		showChar();
 	}
 
 	//----------------------------StartGame--------------------------------------------
@@ -180,17 +383,17 @@ void iDraw()
 
 		room();
 		
-		/*int room[4] = { iLoadImage("image\\SnakeRoom.png"),
-			iLoadImage("image\\NeutralRoom.png"),
-			iLoadImage("image\\TreasureRoom.png"),
-			iLoadImage("image\\LadderRoom.png") };
-			*/
+		int room[4] = { iLoadImage("image\\SnakeRoom-min.png"),
+			iLoadImage("image\\NeutralRoom-min.png"),
+			iLoadImage("image\\TreasureRoom-min.png"),
+			iLoadImage("image\\LadderRoom-min.png") };
+			
 		int player1[4] = { iLoadImage("image\\player00.png"),
 			iLoadImage("image\\player01.png"),
 			iLoadImage("image\\player02.png"),
 			iLoadImage("image\\player03.png") };
 
-		//iShowImage(0, 0, ScreenWidth, ScreenHeight, room[roomIndex]);
+		iShowImage(0, 0, ScreenWidth, ScreenHeight, room[roomIndex]);
 		if (stand==true)
 		{
 			iShowImage(playerX, playerY, 208, 208, player1[roomAnimeIndex]);
@@ -229,13 +432,17 @@ void iDraw()
 			}
 		}
 		
+		if (roomIndex == 2 && chest == true)
+		{
+			iShowImage(600, 100, 208 / 2, 208 / 2, iLoadImage("image\\Chest.png"));
+		}
 
 		if (crouch)
 		{
 
 			actionCrouch();
 			crouchTimer++;
-			if (crouchTimer >= 50)
+			if (crouchTimer >= 10)
 			{
 				crouchTimer = 0;
 				crouch = false;
@@ -247,6 +454,7 @@ void iDraw()
 
 	}
 	lifeHeartShow();
+	showScore();
 
 }
 
@@ -277,8 +485,7 @@ void iMouse(int button, int state, int mx, int my)
 		//printf("x=%d y=%d", mx, my);
 		if (menuPage == true && (mx >= 465 && mx <= 735) && (my >= 336 && my <= 414))
 		{
-			diceBoardMenuInitialize();
-			startPageHandler();
+			startgame();
 		}
 
 		else if (menuPage == true && (mx >= 465 && mx <= 735) && (my >= 234 && my <= 312))
@@ -314,9 +521,15 @@ key- holds the ASCII value of the key pressed.
 
 void iKeyboard(unsigned char key)
 {
+
+	if (gameOverPage)
+	{
+		takeChar(key);
+	}
+
 	if (key == '\b')
 	{
-		if (menuPage != true && diceBoardMenu == true)
+		if (menuPage != true && (diceBoardMenu == true || scorePage==true || aboutPage==true || controlPage==true))
 		{
 			menuPageHandler();
 		}
@@ -326,18 +539,25 @@ void iKeyboard(unsigned char key)
 		}
 	}
 
-	if (key == 'd' || key == 'D')
+	if (key == 'd')
 	{
-		if (diceBoardMenu && rollDice)
+		if (diceBoardMenu==true && rollDice==true && totalRoll!=19)
 		{
 			ran();
+			
 			check = true;
 			boardAnimeMove();
+			if (!multiple)
+				point += diceRoll;
 			if (animeBoardY > 208){
 				boardy -= 208;
 				animeBoardY = 208;
 			}
 			rollDice = false;
+			if (multiple ){
+				rollDice = true;
+				multiple = false;
+			}
 		}
 		
 	}
@@ -369,6 +589,7 @@ void iKeyboard(unsigned char key)
 				venomThrow = true;
 				charInit = true;
 			}
+			chest = true;
 			
 		}
 
@@ -377,9 +598,15 @@ void iKeyboard(unsigned char key)
 
 	if (key == 'm')
 	{
-		if (roomPage)
+		if (sound == true)
 		{
-			snakeAlive = false;
+			sound = false;
+			PlaySound(0, 0, 0);
+		}
+		else
+		{
+			sound = true;
+			PlaySound("music\\Kindled_Cosy_Combat.wav", NULL, SND_LOOP | SND_ASYNC);
 		}
 	}
 
@@ -392,6 +619,19 @@ void iKeyboard(unsigned char key)
 			stand = false;
 			crouch = false;
 		}
+	}
+
+	if (key == 'l')
+	{
+		if (roomIndex == 3 && totalRoll<16 && playerX >= 600)
+		{
+			check = true;
+			diceBoardHandler();
+			charInit = true;
+			ladderUp();
+
+		}
+
 	}
 	
 	
@@ -414,8 +654,29 @@ void iSpecialKeyboard(unsigned char key)
 	{
 		if (roomPage)
 		{
-			if (playerX + 208 < snakeX)
+			if (roomIndex == 0)
+			{
+				if (playerX + 208 < snakeX)
+					playerX += 20;
+			}
+			else if (roomIndex == 2 && chest == true)
+			{
 				playerX += 20;
+				if (playerX + 180 >= 600){
+					if (heart < 3)
+						heart++;
+					else{
+						point+=2;
+					}
+					chest = false;
+				}
+			}
+			else
+			{
+				if (playerX + 208 < ScreenWidth)
+					playerX += 20;
+			}
+			
 		}
 	}
 	if (key == GLUT_KEY_LEFT)
@@ -450,16 +711,16 @@ void snakeVenomBulletChange()
 			playerLife--;
 			if (playerLife == 0)
 			{
+				point -= 2;
 				snakeAlive = true;
 				check = true;
-				//rollDice = true;
 				diceBoardHandler();
 				venomThrow = true;
 				charInit = true;
 				playerLife = 5;
 				heart--;
 				if (heart == 0)
-					exit(0);
+					gameOverPageHandler();
 				ladderDown();
 			}
 		}
@@ -474,12 +735,19 @@ void snakeVenomBulletChange()
 		if (bulletX >= snakeX)
 		{
 			bulletInitialize();
-			//fire = false;
+			
 			hit = true;
 			snakeLife--;
-			if (snakeLife == 0)
+			if (snakeLife == 0 && totalRoll!=19)
 			{
 				snakeAlive = false;
+				check = false;
+				point += 10;
+			}
+			else if (snakeLife == 0 && totalRoll == 19)
+			{
+				point += 10;
+				gameOverPageHandler();
 			}
 		}
 	}
@@ -493,8 +761,10 @@ int main()
 	snakeVenomInitialize();
 	iSetTimer(100, boardAnimeChange);
 	iSetTimer(150, roomAnimeChange);
-	iSetTimer(100, snakeVenomBulletChange);
+	iSetTimer(50, snakeVenomBulletChange);
 	iSetTimer(100, charFire);
+	if (sound)
+		PlaySound("music\\Kindled_Cosy_Combat.wav", NULL, SND_LOOP | SND_ASYNC);
 	iInitialize(ScreenWidth, ScreenHeight, "Serpentine Odyssey : Ladder of Shadows");
 	///updated see the documentations
 	iStart();
