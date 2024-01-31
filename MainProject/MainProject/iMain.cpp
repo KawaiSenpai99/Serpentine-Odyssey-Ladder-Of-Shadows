@@ -189,6 +189,7 @@ void startgame()
 	charInit = true;
 	check = true;
 	multiple = false;
+	pause = false;
 
 
 	diceBoardHandler();
@@ -230,7 +231,7 @@ void bulletInitialize()
 //--------------------------LifeRelated---------------------------
 void lifeBarShow()
 {
-	if (roomPage)
+	if (roomPage && pause==false)
 	{
 		int lifeBar[6] = { iLoadImage("image\\HP6.png"),
 			iLoadImage("image\\HP5.png"),
@@ -259,7 +260,7 @@ void lifeHeartShow()
 
 void charFire()
 {
-	if (hit==false && crouch==false)
+	if (hit == false && crouch == false && pause == false)
 	{
 		bulletPlayerIndex++;
 		if (bulletPlayerIndex == 3)
@@ -374,7 +375,9 @@ void iDraw()
 		iShowImage(0, boardy, 1200, 1040, bg[0]);
 		iShowImage(1040, 0, 160, 160, dice[diceIndex]);
 		iShowImage(animeBoardX, animeBoardY, 208, 208, player[animeIndex]);
-		
+
+		iShowImage(1060, 280, 128, 128, iLoadImage("image\\Pause Button.png"));
+
 	}
 
 	//----------------------------ROOMPAGE--------------------------------------------
@@ -451,7 +454,12 @@ void iDraw()
 
 		}
 		lifeBarShow();
+		iShowImage(550, 500, 100, 100, iLoadImage("image\\Pause Button.png"));
 
+	}
+	if (roomPauseMenu==true || boardPauseMenu==true)
+	{
+		iShowImage(0, 0, ScreenWidth, ScreenHeight, iLoadImage("image\\PauseMenu.png"));
 	}
 	lifeHeartShow();
 	showScore();
@@ -482,7 +490,7 @@ void iMouse(int button, int state, int mx, int my)
 	
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		//printf("x=%d y=%d", mx, my);
+		printf("x=%d y=%d", mx, my);
 		if (menuPage == true && (mx >= 465 && mx <= 735) && (my >= 336 && my <= 414))
 		{
 			startgame();
@@ -502,6 +510,36 @@ void iMouse(int button, int state, int mx, int my)
 		{
 			aboutPageHandler();
 		}
+		
+		else if (diceBoardMenu == true && (mx >= 1060 && mx <= 1060+128) && (my >= 280 && my <= 280+128))
+		{
+			boardPauseHandler();
+		}
+		
+		else if (roomPage == true && (mx >= 550 && mx <= 650) && (my >= 500 && my <= 600))
+		{
+			roomPauseHandler();
+		}
+		
+		else if (boardPauseMenu == true && (mx >= 300 && mx <= 870) && (my >= 330 && my <= 495))
+		{
+			diceBoardHandler();
+		}
+		else if (boardPauseMenu == true && (mx >= 300 && mx <= 870) && (my >= 115 && my <= 275))
+		{
+			menuPageHandler();
+		}
+		
+		else if (roomPauseMenu == true && (mx >= 300 && mx <= 870) && (my >= 330 && my <= 495))
+		{
+			roomPageHandler();
+		}
+		else if (roomPauseMenu == true && (mx >= 300 && mx <= 870) && (my >= 115 && my <= 275))
+		{
+			menuPageHandler();
+		}
+
+
 
 		
 	}
@@ -623,7 +661,7 @@ void iKeyboard(unsigned char key)
 
 	if (key == 'l')
 	{
-		if (roomIndex == 3 && totalRoll<16 && playerX >= 600)
+		if (roomIndex == 3 && totalRoll<16 && playerX >= 600 && pause==false)
 		{
 			check = true;
 			diceBoardHandler();

@@ -15,6 +15,9 @@ bool aboutPage = false;
 bool diceBoardMenu = false;
 bool roomPage = false;
 bool gameOverPage = false;
+bool boardPauseMenu = false;
+bool roomPauseMenu = false;
+bool pause = false;
 
 //--------------------------------Menu button handler  -------------------------------------------
 
@@ -28,6 +31,9 @@ void menuPageHandler()
 	diceBoardMenu = false;
 	roomPage = false;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void diceBoardHandler()
@@ -42,6 +48,9 @@ void diceBoardHandler()
 	snakeAlive = true;
 	snakeLife = 3;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void startPageHandler()
@@ -52,8 +61,11 @@ void startPageHandler()
 	controlPage = false;
 	aboutPage = false;
 	diceBoardMenu = false;
-	roomPage == false;
+	roomPage = false;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void scorePageHandler()
@@ -66,6 +78,9 @@ void scorePageHandler()
 	diceBoardMenu = false;
 	roomPage = false;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void controlPageHandler()
@@ -78,6 +93,9 @@ void controlPageHandler()
 	diceBoardMenu = false;
 	roomPage = false;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void aboutPageHandler()
@@ -90,6 +108,9 @@ void aboutPageHandler()
 	diceBoardMenu = false;
 	roomPage = false;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 void roomPageHandler()
 {
@@ -101,6 +122,9 @@ void roomPageHandler()
 	diceBoardMenu = false;
 	roomPage = true;
 	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
 
 void gameOverPageHandler()
@@ -113,7 +137,41 @@ void gameOverPageHandler()
 	diceBoardMenu = false;
 	roomPage = false;
 	gameOverPage = true;
+	boardPauseMenu = false;
+	roomPauseMenu = false;
+	pause = false;
 }
+
+void boardPauseHandler()
+{
+	menuPage = false;
+	startPage = false;
+	scorePage = false;
+	controlPage = false;
+	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
+	gameOverPage = false;
+	boardPauseMenu = true;
+	roomPauseMenu = false;
+	pause = true;
+}
+
+void roomPauseHandler()
+{
+	menuPage = false;
+	startPage = false;
+	scorePage = false;
+	controlPage = false;
+	aboutPage = false;
+	diceBoardMenu = false;
+	roomPage = false;
+	gameOverPage = false;
+	boardPauseMenu = false;
+	roomPauseMenu = true;
+	pause = true;
+}
+
 
 
 #endif // !MENU_H_INCLUDED
