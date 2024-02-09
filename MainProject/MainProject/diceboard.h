@@ -37,6 +37,7 @@ bool multiple = false;
 void ran()
 {
 	//time_t now = time(0);
+	srand(0);
 	int gen = rand() % 100;
 	diceIndex = (/*now * */gen) % 6;
 	diceRoll = diceIndex + 1;
